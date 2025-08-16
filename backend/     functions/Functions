@@ -1,1 +1,3 @@
 # (รันบน emulator ตอนนี้)
+npm i
+npm run serve
