@@ -1,1 +1,79 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() { return request.auth != null; }
+    function uid() { return request.auth.uid; }
+    function hasRole(role) {
+      return isSignedIn() && role in get(/databases/$(database)/documents/users/$(uid())).data.roles;
+    }
+    // ตรวจสิทธิ์จาก permissions collection
+    function can(entityId, action) {
+      return hasRole("owner") ||
+             hasRole("admin") ||
+             (isSignedIn() &&
+              exists(/databases/$(database)/documents/permissions/$(entityId)) &&
+              action in get(/databases/$(database)/documents/permissions/$(entityId)).data.allowedFor
+            );
+    }
+
+    // users: อ่านโปรไฟล์ตัวเอง, admin/owner อ่านทั้งหมด, ห้ามใครก็ได้เขียนมั่ว
+    match /users/{userId} {
+      allow read: if isSignedIn() && (userId == uid() || hasRole("admin") || hasRole("owner"));
+      allow write: if userId == uid() || hasRole("admin") || hasRole("owner");
+    }
+
+    // tpnFiles: อ่านได้เมื่อ public หรือเป็นเจ้าของ/มีสิทธิ์
+    match /tpnFiles/{tpnId} {
+      allow read: if resource.data.visibility == "public"
+                  || (isSignedIn() && resource.data.ownerId == uid())
+                  || can(tpnId, "read");
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && (resource.data.ownerId == uid() || hasRole("admin") || hasRole("owner") || can(tpnId, "write"));
+    }
+
+    // projects
+    match /projects/{projectId} {
+      allow read: if can(projectId, "read") || hasRole("admin") || hasRole("owner");
+      allow create: if isSignedIn();
+      allow update, delete: if hasRole("admin") || hasRole("owner") || can(projectId, "write");
+    }
+
+    // permissions (แก้ได้เฉพาะ owner/admin)
+    match /permissions/{entityId} {
+      allow read: if isSignedIn();
+      allow write: if hasRole("admin") || hasRole("owner");
+    }
+
+    // marketplace: อ่าน public, สร้าง/แก้ได้สำหรับ seller ที่มีสิทธิ์
+    match /marketplace/{itemId} {
+      allow read: if true;
+      allow write: if hasRole("owner") || hasRole("admin") || (isSignedIn() && can(itemId, "sell"));
+    }
+
+    // audits: อ่านเฉพาะ admin/owner
+    match /audits/{auditId} {
+      allow read: if hasRole("admin") || hasRole("owner");
+      allow write: if hasRole("admin") || hasRole("owner");
+    }
+
+    // help_kb: อ่าน public, เขียนเฉพาะ admin/editor
+    match /help_kb/{docId} {
+      allow read: if true;
+      allow write: if hasRole("admin") || hasRole("owner") || hasRole("editor");
+    }
+
+    // tickets: เจ้าของอ่าน/แก้ของตัวเอง, admin/owner จัดการทั้งหมด
+    match /tickets/{ticketId} {
+      allow read: if hasRole("admin") || hasRole("owner") || (isSignedIn() && resource.data.userId == uid());
+      allow write: if isSignedIn();
+    }
+
+    // licenses: อ่านเฉพาะผู้เกี่ยวข้อง, เขียนโดย admin/owner
+    match /licenses/{licenseId} {
+      allow read: if hasRole("admin") || hasRole("owner") || (isSignedIn() && (resource.data.ownerId == uid() || uid() in resource.data.assigneeIds));
+      allow write: if hasRole("admin") || hasRole("owner");
+    }
+  }
+}
 
