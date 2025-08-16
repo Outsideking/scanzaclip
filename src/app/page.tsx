@@ -51,3 +51,32 @@ export default function HomePage() {
     </div>
   )
 }
+import algoliasearch from "algoliasearch/lite"
+import { InstantSearch, SearchBox, Hits } from "react-instantsearch-hooks-web"
+
+const searchClient = algoliasearch(
+  process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!,
+  process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY!
+)
+
+function Hit({ hit }: any) {
+  return (
+    <div className="p-3 border rounded">
+      <b>{hit.name}</b> — {hit.description}
+    </div>
+  )
+}
+
+export default function HomePage() {
+  return (
+    <div className="p-6">
+      <h1 className="text-xl font-bold">ScanzaClip - Search .tpn</h1>
+      <InstantSearch searchClient={searchClient} indexName={process.env.NEXT_PUBLIC_ALGOLIA_INDEX!}>
+        <SearchBox className="mt-4" placeholder="🔍 ค้นหาไฟล์ .tpn..." />
+        <div className="mt-4 space-y-2">
+          <Hits hitComponent={Hit} />
+        </div>
+      </InstantSearch>
+    </div>
+  )
+}
