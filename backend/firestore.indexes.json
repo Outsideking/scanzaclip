@@ -1,1 +1,14 @@
 
+{
+  "indexes": [
+    { "collectionGroup": "tpnFiles", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "tags", "arrayConfig": "CONTAINS" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" }
+    ]},
+    { "collectionGroup": "marketplace", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" },
+      { "fieldPath": "price", "order": "ASCENDING" }
+    ]}
+  ],
+  "fieldOverrides": []
+}
