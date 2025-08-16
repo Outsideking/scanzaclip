@@ -1,9 +1,14 @@
-import { collection, getDocs } from "firebase/firestore"
-import { db } from "./firebase"
-import { TpnFile } from "@/types/tpn"
+import { syncTpnToAlgolia } from "./algolia"
 
-// ✅ ดึงรายการไฟล์ทั้งหมด
-export async function listTpnFiles(): Promise<TpnFile[]> {
-  const snapshot = await getDocs(collection(db, "tpnFiles"))
-  return snapshot.docs.map(doc => doc.data() as TpnFile)
+export async function uploadTpnFile(tpn: TpnFile) {
+  // Firestore
+  await setDoc(doc(db, "tpnFiles", tpn.id), tpn)
+
+  // Storage
+  const blob = new Blob([JSON.stringify(tpn, null, 2)], { type: "application/json" })
+  const storageRef = ref(storage, `tpn/${tpn.id}.tpn`)
+  await uploadBytes(storageRef, blob)
+
+  // Algolia
+  await syncTpnToAlgolia(tpn)
 }
