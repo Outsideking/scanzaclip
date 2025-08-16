@@ -1,0 +1,14 @@
+{
+  "id": "tpn-001",
+  "name": "Engine Prototype",
+  "description": "Blueprint เครื่องยนต์ต้นแบบ",
+  "createdAt": 1723800000,
+  "tags": ["engine", "prototype"],
+  "data": {
+    "parts": [
+      { "name": "Cylinder", "material": "Steel", "size": "20cm" },
+      { "name": "Piston", "material": "Alloy", "size": "10cm" }
+    ],
+    "energySource": "Gasoline"
+  }
+}
