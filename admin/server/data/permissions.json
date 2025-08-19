@@ -1,1 +1,4 @@
-
+[
+    {"id":1,"user_id":1,"project":"Scanzaclip","role":"Founder","access":100},
+    {"id":2,"user_id":2,"project":"Scanzaclip","role":"Admin","access":80}
+]
