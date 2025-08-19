@@ -33,3 +33,18 @@ document.getElementById('send-btn').addEventListener('click', () => {
 // Initial load
 fetchUsers();
 fetchSclips();
+const socket = io();
+
+// ส่งข้อความ
+document.getElementById('send-btn').addEventListener('click', () => {
+    const msg = document.getElementById('chat-input').value;
+    if(msg) {
+        socket.emit('send-message', msg);
+        document.getElementById('chat-input').value = '';
+    }
+});
+
+// รับข้อความ
+socket.on('receive-message', (msg) => {
+    document.getElementById('chat-box').innerHTML += `<div class="msg">${msg}</div>`;
+});
