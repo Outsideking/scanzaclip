@@ -29,3 +29,11 @@ io.on('connection', (socket) => {
 // Start server
 const PORT = process.env.PORT || 3000;
 http.listen(PORT, () => console.log(`Admin server running on port ${PORT}`));
+const { translateText } = require('./utils/translator');
+
+// แปลข้อความ
+app.post('/admin/translate', async (req, res) => {
+    const { text, lang } = req.body;
+    const translated = await translateText(text, lang);
+    res.json({ original: text, translated });
+});
