@@ -24,3 +24,26 @@ exports.createUser = (req, res) => {
     user: { id: Date.now(), name, role },
   });
 };
+// controllers/adminController.js
+const userService = require("../services/userService");
+
+exports.getDashboard = (req, res) => {
+  res.json({
+    message: "Welcome to Admin Dashboard",
+    user: req.user,
+  });
+};
+
+exports.getUsers = (req, res) => {
+  const users = userService.getAllUsers();
+  res.json(users);
+};
+
+exports.createUser = (req, res) => {
+  const { name, role } = req.body;
+  const newUser = userService.createUser(name, role);
+  res.json({
+    message: "User created successfully",
+    user: newUser,
+  });
+};
