@@ -1,1 +1,4 @@
-
+[
+    {"id": 1, "name": "ScanEgg", "description": "Sclip สำหรับสแกนไข่และทำอาหาร"},
+    {"id": 2, "name": "MoveBot", "description": "Sclip สำหรับควบคุมหุ่นยนต์เคลื่อนที่"}
+]
