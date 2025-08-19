@@ -3,3 +3,9 @@
     "dev:ingest": "node apps/data-ingestion/index.js"
   }
 }
+{
+  "scripts": {
+    "dev:api": "node apps/api/app.js",
+    "dev:ingest": "node apps/data-ingestion/index.js"
+  }
+}
