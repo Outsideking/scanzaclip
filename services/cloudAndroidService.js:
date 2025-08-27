@@ -1,0 +1,24 @@
+// backend/services/cloudAndroidService.js
+import fetch from "node-fetch";
+
+const CAW_BASE = process.env.CLOUD_ANDROID_INTERNAL_URL || "http://cloud-android-web:5000";
+
+export async function getEmulatorUrlForUser(userId) {
+  const res = await fetch(`${CAW_BASE}/api/emulator/url`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json", "X-User-Id": String(userId) }
+  });
+  if (!res.ok) throw new Error("Cloud Android API failed");
+  const data = await res.json();
+  return data; // { url, version, ... }
+}
+
+// admin trigger to change version/tag
+export async function setEmulatorVersion(tag) {
+  const res = await fetch(`${CAW_BASE}/api/emulator/version`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ tag })
+  });
+  return res.ok ? await res.json() : null;
+}
