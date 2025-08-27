@@ -1,0 +1,6 @@
+// example route
+app.get("/cloud-android/open", authMiddleware, async (req, res) => {
+  const userId = req.user.id;
+  const info = await getEmulatorUrlForUser(userId);
+  res.redirect(info.url); // หรือ render page with iframe
+});
