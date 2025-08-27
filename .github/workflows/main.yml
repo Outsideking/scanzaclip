@@ -1,0 +1,9 @@
+- name: Build cloud-android image
+  run: |
+    docker build -t cloud-android ./backend/services/cloud-android-web
+    docker tag cloud-android:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/cloud-android:latest
+    docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/cloud-android:latest
+
+- name: Update ECS service cloud-android
+  run: |
+    aws ecs update-service --cluster scanzaclip-cluster --service cloud-android-service --force-new-deployment --region ${{ secrets.AWS_REGION }}
