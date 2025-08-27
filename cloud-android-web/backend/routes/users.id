@@ -1,0 +1,8 @@
+CREATE TABLE subscriptions (
+  id serial PRIMARY KEY,
+  user_id integer REFERENCES users(id),
+  product varchar(100),
+  status varchar(30),
+  started_at timestamptz,
+  ended_at timestamptz
+);
