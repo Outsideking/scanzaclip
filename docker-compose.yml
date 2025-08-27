@@ -1,1 +1,17 @@
+version: "3.8"
+services:
+  scanzaclip-backend:
+    build: ./backend
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
 
+  cloud-android-web:
+    build: ./backend/services/cloud-android-web
+    ports:
+      - "5000:5000"
+    environment:
+      - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
+      - PAYPAL_CLIENT_SECRET=${PAYPAL_CLIENT_SECRET}
+      - OPN_SECRET_KEY=${OPN_SECRET_KEY}
