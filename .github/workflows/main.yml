@@ -7,3 +7,23 @@
 - name: Update ECS service cloud-android
   run: |
     aws ecs update-service --cluster scanzaclip-cluster --service cloud-android-service --force-new-deployment --region ${{ secrets.AWS_REGION }}
+name: Scanzaclip Production Engine
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  run-engine:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node (ถ้าใช้ JS)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Run JS Service
+        run: node cloudAndroidService.js
